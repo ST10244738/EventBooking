@@ -1,0 +1,28 @@
+﻿@model IEnumerable<EventBooking.Models.Booking>
+
+<h2>Bookings</h2>
+
+<a asp-action="Create">Create Booking</a>
+
+<table>
+
+    <tr>
+        <th>Event</th>
+        <th>Venue</th>
+        <th>Date</th>
+    </tr>
+
+    @foreach (var b in Model)
+    {
+        <tr>
+
+            <td>@b.Event?.EventName</td>
+
+            <td>@b.Venue?.VenueName</td>
+
+            <td>@b.BookingDate.ToShortDateString()</td>
+
+        </tr>
+    }
+
+</table>

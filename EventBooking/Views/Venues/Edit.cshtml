@@ -1,0 +1,23 @@
+﻿@model EventBooking.Models.Venue
+
+<h2>Edit Venue</h2>
+
+<form asp-action="Edit">
+
+    <input type="hidden" asp-for="VenueId" />
+
+    <label>Name</label>
+    <input asp-for="VenueName" />
+
+    <label>Location</label>
+    <input asp-for="Location" />
+
+    <label>Capacity</label>
+    <input asp-for="Capacity" />
+
+    <label>Image URL</label>
+    <input asp-for="ImageUrl" />
+
+    <button>Update</button>
+
+</form>

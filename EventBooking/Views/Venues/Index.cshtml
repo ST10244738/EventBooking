@@ -1,0 +1,45 @@
+﻿@model IEnumerable<EventBooking.Models.Venue>
+
+<h2>Venues</h2>
+
+<form method="get">
+    <input type="text" name="search" placeholder="Search venue" />
+    <button>Search</button>
+</form>
+
+<a asp-action="Create">Add Venue</a>
+
+<table>
+
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Capacity</th>
+        <th>Image</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var v in Model)
+    {
+        <tr>
+
+            <td>@v.VenueName</td>
+            <td>@v.Location</td>
+            <td>@v.Capacity</td>
+
+            <td>
+                <img src="@v.ImageUrl" width="120" />
+            </td>
+
+            <td>
+
+                <a asp-action="Edit" asp-route-id="@v.VenueId">Edit</a>
+
+                <a asp-action="Delete" asp-route-id="@v.VenueId">Delete</a>
+
+            </td>
+
+        </tr>
+    }
+
+</table>

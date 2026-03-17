@@ -1,0 +1,18 @@
+﻿@model EventBooking.Models.Booking
+
+<h2>Create Booking</h2>
+
+<form asp-action="Create">
+
+    <label>Event</label>
+    <select asp-for="EventId" asp-items="ViewBag.Events"></select>
+
+    <label>Venue</label>
+    <select asp-for="VenueId" asp-items="ViewBag.Venues"></select>
+
+    <label>Date</label>
+    <input asp-for="BookingDate" type="date" />
+
+    <button>Create Booking</button>
+
+</form>

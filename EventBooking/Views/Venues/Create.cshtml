@@ -1,0 +1,21 @@
+﻿@model EventBooking.Models.Venue
+
+<h2>Create Venue</h2>
+
+<form asp-action="Create">
+
+    <label>Name</label>
+    <input asp-for="VenueName" />
+
+    <label>Location</label>
+    <input asp-for="Location" />
+
+    <label>Capacity</label>
+    <input asp-for="Capacity" />
+
+    <label>Image URL</label>
+    <input asp-for="ImageUrl" required/>
+
+    <button>Create</button>
+
+</form>

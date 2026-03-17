@@ -1,0 +1,14 @@
+﻿@model EventBooking.Models.Venue
+
+<h2>Delete Venue</h2>
+
+<h4>Are you sure?</h4>
+
+<p>@Model.VenueName</p>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="VenueId" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
