@@ -1,20 +1,79 @@
-﻿<h2>Admin Dashboard</h2>
+@{
+    ViewData["Title"] = "Dashboard";
+}
 
-<div class="dashboard">
+<div class="mb-4">
+    <h2 class="mb-0">Admin Dashboard</h2>
+    <p class="text-muted small mb-0">Welcome back — here's an overview of your system.</p>
+</div>
 
-    <div class="card orange">
-        <h3>@ViewBag.TotalVenues</h3>
-        <p>Total Venues</p>
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <a asp-controller="Venues" asp-action="Index" class="stat-card text-decoration-none">
+            <div class="stat-icon blue">
+                <i class="bi bi-building"></i>
+            </div>
+            <div>
+                <div class="stat-number">@ViewBag.TotalVenues</div>
+                <div class="stat-label">Total Venues</div>
+            </div>
+        </a>
     </div>
 
-    <div class="card green">
-        <h3>@ViewBag.TotalEvents</h3>
-        <p>Total Events</p>
+    <div class="col-md-4">
+        <a asp-controller="Events" asp-action="Index" class="stat-card text-decoration-none">
+            <div class="stat-icon green">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+            <div>
+                <div class="stat-number">@ViewBag.TotalEvents</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+        </a>
     </div>
 
-    <div class="card orange">
-        <h3>@ViewBag.TotalBookings</h3>
-        <p>Total Bookings</p>
+    <div class="col-md-4">
+        <a asp-controller="Bookings" asp-action="Index" class="stat-card text-decoration-none">
+            <div class="stat-icon orange">
+                <i class="bi bi-ticket-perforated"></i>
+            </div>
+            <div>
+                <div class="stat-number">@ViewBag.TotalBookings</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+<!-- Quick Actions -->
+<h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size:0.75rem;letter-spacing:1px;">
+    Quick Actions
+</h6>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+        <a asp-controller="Venues" asp-action="Create" class="quick-action">
+            <i class="bi bi-plus-circle text-primary fs-5"></i>
+            Add New Venue
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a asp-controller="Events" asp-action="Create" class="quick-action">
+            <i class="bi bi-calendar-plus text-success fs-5"></i>
+            Create New Event
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a asp-controller="Bookings" asp-action="Create" class="quick-action">
+            <i class="bi bi-bookmark-plus text-warning fs-5"></i>
+            Make a Booking
+        </a>
     </div>
 
 </div>
