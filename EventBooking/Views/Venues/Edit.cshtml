@@ -1,23 +1,65 @@
-﻿@model EventBooking.Models.Venue
+@model EventBooking.Models.Venue
 
-<h2>Edit Venue</h2>
+@{
+    ViewData["Title"] = "Edit Venue";
+}
 
-<form asp-action="Edit">
+<h2 class="mb-3">Edit Venue</h2>
 
-    <input type="hidden" asp-for="VenueId" />
+<div class="col-md-6">
 
-    <label>Name</label>
-    <input asp-for="VenueName" />
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
 
-    <label>Location</label>
-    <input asp-for="Location" />
+    <form asp-action="Edit">
 
-    <label>Capacity</label>
-    <input asp-for="Capacity" />
+        <input type="hidden" asp-for="VenueId" />
 
-    <label>Image URL</label>
-    <input asp-for="ImageUrl" />
+        <div class="mb-3">
+            <label asp-for="VenueName" class="form-label">Venue Name</label>
+            <input asp-for="VenueName" class="form-control" />
+            <span asp-validation-for="VenueName" class="text-danger"></span>
+        </div>
 
-    <button>Update</button>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Location</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
 
-</form>
+        <div class="mb-3">
+            <label asp-for="Capacity" class="form-label">Capacity</label>
+            <input asp-for="Capacity" class="form-control" type="number" min="1" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label">Image URL (optional)</label>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mb-2">
+                    <img src="@Model.ImageUrl" style="max-height:100px;" class="rounded" />
+                </div>
+            }
+            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+        </div>
+
+        <button type="submit" class="btn btn-warning">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

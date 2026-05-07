@@ -1,18 +1,53 @@
-﻿@model EventBooking.Models.Booking
+@model EventBooking.Models.Booking
 
-<h2>Create Booking</h2>
+@{
+    ViewData["Title"] = "Create Booking";
+}
 
-<form asp-action="Create">
+<h2 class="mb-3">Create Booking</h2>
 
-    <label>Event</label>
-    <select asp-for="EventId" asp-items="ViewBag.Events"></select>
+<div class="col-md-6">
 
-    <label>Venue</label>
-    <select asp-for="VenueId" asp-items="ViewBag.Venues"></select>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
 
-    <label>Date</label>
-    <input asp-for="BookingDate" type="date" />
+    <form asp-action="Create">
 
-    <button>Create Booking</button>
+        <div class="mb-3">
+            <label asp-for="EventId" class="form-label">Event</label>
+            <select asp-for="EventId" asp-items="ViewBag.Events" class="form-select">
+                <option value="">-- Select an Event --</option>
+            </select>
+        </div>
 
-</form>
+        <div class="mb-3">
+            <label asp-for="VenueId" class="form-label">Venue</label>
+            <select asp-for="VenueId" asp-items="ViewBag.Venues" class="form-select">
+                <option value="">-- Select a Venue --</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="BookingDate" class="form-label">Booking Date</label>
+            <input asp-for="BookingDate" class="form-control" type="date" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Create Booking</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

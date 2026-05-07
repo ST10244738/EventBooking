@@ -31,11 +31,6 @@ namespace EventBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Event e)
         {
-            if (string.IsNullOrEmpty(e.EventName) || e.EventDate == default)
-            {
-                ModelState.AddModelError("", "All fields are required.");
-            }
-
             if (ModelState.IsValid)
             {
                 _context.Add(e);
@@ -86,11 +81,16 @@ namespace EventBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Block deletion if event has active bookings
+            bool hasBookings = await _context.Bookings.AnyAsync(b => b.EventId == id);
+            if (hasBookings)
+            {
+                TempData["Error"] = "This event cannot be deleted because it has active bookings.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var e = await _context.Events.FindAsync(id);
             if (e == null) return NotFound();
-
-            var bookings = _context.Bookings.Where(b => b.EventId == id);
-            _context.Bookings.RemoveRange(bookings);
 
             _context.Events.Remove(e);
             await _context.SaveChangesAsync();

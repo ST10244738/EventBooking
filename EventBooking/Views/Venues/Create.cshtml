@@ -1,21 +1,57 @@
-﻿@model EventBooking.Models.Venue
+@model EventBooking.Models.Venue
 
-<h2>Create Venue</h2>
+@{
+    ViewData["Title"] = "Create Venue";
+}
 
-<form asp-action="Create">
+<h2 class="mb-3">Create Venue</h2>
 
-    <label>Name</label>
-    <input asp-for="VenueName" />
+<div class="col-md-6">
 
-    <label>Location</label>
-    <input asp-for="Location" />
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
 
-    <label>Capacity</label>
-    <input asp-for="Capacity" />
+    <form asp-action="Create">
 
-    <label>Image URL</label>
-    <input asp-for="ImageUrl" required/>
+        <div class="mb-3">
+            <label asp-for="VenueName" class="form-label">Venue Name</label>
+            <input asp-for="VenueName" class="form-control" />
+            <span asp-validation-for="VenueName" class="text-danger"></span>
+        </div>
 
-    <button>Create</button>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Location</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
 
-</form>
+        <div class="mb-3">
+            <label asp-for="Capacity" class="form-label">Capacity</label>
+            <input asp-for="Capacity" class="form-control" type="number" min="1" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label">Image URL (optional)</label>
+            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+        </div>
+
+        <button type="submit" class="btn btn-success">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

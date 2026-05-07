@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using EventBooking.Data;
 using EventBooking.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventBooking.Controllers
 {
@@ -33,13 +34,6 @@ namespace EventBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Venue venue)
         {
-            if (string.IsNullOrEmpty(venue.VenueName) ||
-                string.IsNullOrEmpty(venue.Location) ||
-                venue.Capacity <= 0)
-            {
-                ModelState.AddModelError("", "All fields are required.");
-            }
-
             if (ModelState.IsValid)
             {
                 _context.Add(venue);
@@ -86,20 +80,18 @@ namespace EventBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Block deletion if venue has active bookings
+            bool hasBookings = await _context.Bookings.AnyAsync(b => b.VenueId == id);
+            if (hasBookings)
+            {
+                TempData["Error"] = "This venue cannot be deleted because it has active bookings.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var venue = await _context.Venues.FindAsync(id);
             if (venue == null) return NotFound();
 
-            var events = _context.Events.Where(e => e.VenueId == id).ToList();
-
-            foreach (var e in events)
-            {
-                var bookings = _context.Bookings.Where(b => b.EventId == e.EventId);
-                _context.Bookings.RemoveRange(bookings);
-            }
-
-            _context.Events.RemoveRange(events);
             _context.Venues.Remove(venue);
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

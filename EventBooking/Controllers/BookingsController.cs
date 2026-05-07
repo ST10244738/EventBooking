@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EventBooking.Data;
@@ -15,13 +15,39 @@ namespace EventBooking.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-            var bookings = _context.Bookings
+            var query = _context.Bookings
                 .Include(b => b.Event)
-                .Include(b => b.Venue);
+                .Include(b => b.Venue)
+                .AsQueryable();
 
-            return View(await bookings.ToListAsync());
+            if (!string.IsNullOrEmpty(search))
+            {
+                // Search by BookingId (numeric) or Event Name (text)
+                if (int.TryParse(search, out int bookingId))
+                    query = query.Where(b => b.BookingId == bookingId);
+                else
+                    query = query.Where(b => b.Event.EventName.Contains(search));
+            }
+
+            var results = await query.Select(b => new BookingDetailsViewModel
+            {
+                BookingId   = b.BookingId,
+                BookingDate = b.BookingDate,
+                EventId     = b.EventId,
+                EventName   = b.Event.EventName,
+                EventDate   = b.Event.EventDate,
+                Description = b.Event.Description,
+                VenueId     = b.VenueId,
+                VenueName   = b.Venue.VenueName,
+                Location    = b.Venue.Location,
+                Capacity    = b.Venue.Capacity,
+                VenueImageUrl = b.Venue.ImageUrl
+            }).ToListAsync();
+
+            ViewBag.Search = search;
+            return View(results);
         }
 
         public IActionResult Create()
@@ -40,13 +66,14 @@ namespace EventBooking.Controllers
                 ModelState.AddModelError("", "All fields are required.");
             }
 
+            // Prevent double-booking: same venue on the same date
             bool conflict = _context.Bookings.Any(b =>
                 b.VenueId == booking.VenueId &&
-                b.BookingDate == booking.BookingDate);
+                b.BookingDate.Date == booking.BookingDate.Date);
 
             if (conflict)
             {
-                ModelState.AddModelError("", "Venue already booked on that date.");
+                ModelState.AddModelError("", "This venue is already booked on that date. Please choose a different date or venue.");
             }
 
             if (ModelState.IsValid)
@@ -58,11 +85,9 @@ namespace EventBooking.Controllers
 
             ViewBag.Events = new SelectList(_context.Events, "EventId", "EventName", booking.EventId);
             ViewBag.Venues = new SelectList(_context.Venues, "VenueId", "VenueName", booking.VenueId);
-
             return View(booking);
         }
 
-        // DELETE
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -82,12 +107,10 @@ namespace EventBooking.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
-
             if (booking == null) return NotFound();
 
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
     }
