@@ -362,5 +362,3 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Local developer connection strings - each dev keeps their own
-appsettings.Development.json
