@@ -18,5 +18,9 @@ namespace EventBooking.Models
         public int VenueId { get; set; }
 
         public Venue? Venue { get; set; }
+
+        public int? EventTypeId { get; set; }
+
+        public EventType? EventType { get; set; }
     }
 }

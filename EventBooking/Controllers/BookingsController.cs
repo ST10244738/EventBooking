@@ -15,38 +15,66 @@ namespace EventBooking.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index(
+            string search,
+            int? eventTypeId,
+            DateTime? startDate,
+            DateTime? endDate,
+            bool? availableOnly)
         {
             var query = _context.Bookings
-                .Include(b => b.Event)
+                .Include(b => b.Event).ThenInclude(e => e.EventType)
                 .Include(b => b.Venue)
                 .AsQueryable();
 
+            // Search by BookingId or Event Name
             if (!string.IsNullOrEmpty(search))
             {
-                // Search by BookingId (numeric) or Event Name (text)
                 if (int.TryParse(search, out int bookingId))
                     query = query.Where(b => b.BookingId == bookingId);
                 else
                     query = query.Where(b => b.Event.EventName.Contains(search));
             }
 
+            // Filter by event type
+            if (eventTypeId.HasValue)
+                query = query.Where(b => b.Event.EventTypeId == eventTypeId.Value);
+
+            // Filter by date range (based on event date)
+            if (startDate.HasValue)
+                query = query.Where(b => b.Event.EventDate.Date >= startDate.Value.Date);
+
+            if (endDate.HasValue)
+                query = query.Where(b => b.Event.EventDate.Date <= endDate.Value.Date);
+
+            // Filter by venue availability
+            if (availableOnly == true)
+                query = query.Where(b => b.Venue.IsAvailable);
+
             var results = await query.Select(b => new BookingDetailsViewModel
             {
-                BookingId   = b.BookingId,
-                BookingDate = b.BookingDate,
-                EventId     = b.EventId,
-                EventName   = b.Event.EventName,
-                EventDate   = b.Event.EventDate,
-                Description = b.Event.Description,
-                VenueId     = b.VenueId,
-                VenueName   = b.Venue.VenueName,
-                Location    = b.Venue.Location,
-                Capacity    = b.Venue.Capacity,
-                VenueImageUrl = b.Venue.ImageUrl
+                BookingId     = b.BookingId,
+                BookingDate   = b.BookingDate,
+                EventId       = b.EventId,
+                EventName     = b.Event.EventName,
+                EventDate     = b.Event.EventDate,
+                Description   = b.Event.Description,
+                VenueId       = b.VenueId,
+                VenueName     = b.Venue.VenueName,
+                Location      = b.Venue.Location,
+                Capacity      = b.Venue.Capacity,
+                VenueImageUrl = b.Venue.ImageUrl,
+                IsAvailable   = b.Venue.IsAvailable,
+                EventTypeName = b.Event.EventType != null ? b.Event.EventType.Name : null
             }).ToListAsync();
 
-            ViewBag.Search = search;
+            ViewBag.Search       = search;
+            ViewBag.EventTypeId  = eventTypeId;
+            ViewBag.StartDate    = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate      = endDate?.ToString("yyyy-MM-dd");
+            ViewBag.AvailableOnly = availableOnly;
+            ViewBag.EventTypes   = new SelectList(_context.EventTypes, "EventTypeId", "Name", eventTypeId);
+
             return View(results);
         }
 

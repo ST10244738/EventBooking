@@ -21,6 +21,7 @@
         <tr>
             <th>Name</th>
             <th>Date</th>
+            <th>Type</th>
             <th>Description</th>
             <th>Venue</th>
             <th>Actions</th>
@@ -32,6 +33,16 @@
             <tr>
                 <td>@e.EventName</td>
                 <td>@e.EventDate.ToShortDateString()</td>
+                <td>
+                    @if (e.EventType != null)
+                    {
+                        <span class="badge bg-info text-dark">@e.EventType.Name</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">—</span>
+                    }
+                </td>
                 <td>@e.Description</td>
                 <td>@e.Venue?.VenueName</td>
                 <td>

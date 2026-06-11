@@ -17,13 +17,14 @@ namespace EventBooking.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var events = _context.Events.Include(e => e.Venue);
+            var events = _context.Events.Include(e => e.Venue).Include(e => e.EventType);
             return View(await events.ToListAsync());
         }
 
         public IActionResult Create()
         {
             ViewBag.Venues = new SelectList(_context.Venues, "VenueId", "VenueName");
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name");
             return View();
         }
 
@@ -39,6 +40,7 @@ namespace EventBooking.Controllers
             }
 
             ViewBag.Venues = new SelectList(_context.Venues, "VenueId", "VenueName", e.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", e.EventTypeId);
             return View(e);
         }
 
@@ -46,6 +48,7 @@ namespace EventBooking.Controllers
         {
             var e = await _context.Events.FindAsync(id);
             ViewBag.Venues = new SelectList(_context.Venues, "VenueId", "VenueName", e.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", e.EventTypeId);
             return View(e);
         }
 
@@ -60,6 +63,8 @@ namespace EventBooking.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Venues = new SelectList(_context.Venues, "VenueId", "VenueName", e.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", e.EventTypeId);
             return View(e);
         }
 

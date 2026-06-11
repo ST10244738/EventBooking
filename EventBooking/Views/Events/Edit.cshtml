@@ -49,12 +49,19 @@
                     <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label asp-for="VenueId" class="form-label">Venue</label>
                     <select asp-for="VenueId" asp-items="ViewBag.Venues" class="form-select">
                         <option value="">-- Select a Venue --</option>
                     </select>
                     <span asp-validation-for="VenueId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="EventTypeId" class="form-label">Event Type <span class="text-muted fw-normal">(optional)</span></label>
+                    <select asp-for="EventTypeId" asp-items="ViewBag.EventTypes" class="form-select">
+                        <option value="">-- Select an Event Type --</option>
+                    </select>
                 </div>
 
                 <div class="d-flex gap-2">
